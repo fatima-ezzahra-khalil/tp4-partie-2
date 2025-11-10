@@ -1,31 +1,33 @@
 package com.example.jpa;
 
+import com.example.jpa.Person;
 import jakarta.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Publisher {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class Publisher extends Person {
 
-    private String name;
-    private String country;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Id
+    private Long id;
+    private String companyName;
 
     @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL)
-    private List<Book> books = new ArrayList<>();
+    private List<Book> books;
 
-    // Getters & Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Publisher() {}
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public Publisher(String name, String email, String companyName) {
+        super(name, email);
+        this.companyName = companyName;
+    }
 
-    public String getCountry() { return country; }
-    public void setCountry(String country) { this.country = country; }
-
-    public List<Book> getBooks() { return books; }
-    public void setBooks(List<Book> books) { this.books = books; }
+    // getters et setters
 }

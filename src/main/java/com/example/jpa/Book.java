@@ -1,4 +1,4 @@
-package com.example.jpa;
+package com.example.jpa; // 🔹 Remplace par ton vrai package
 
 import jakarta.persistence.*;
 import java.util.List;
@@ -8,22 +8,23 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     private String title;
-    private String author;
     private double price;
-    private double discountedPrice;
 
-    // Relation : un livre appartient à un éditeur
     @ManyToOne
+    @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
-    // Relation : un livre peut avoir plusieurs avis (Review)
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Review> reviews;
+    @ManyToMany
+    @JoinTable(
+            name = "book_author",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private List<Author> authors;
 
-    // Relation : un livre peut appartenir à plusieurs catégories
     @ManyToMany
     @JoinTable(
             name = "book_category",
@@ -32,13 +33,24 @@ public class Book {
     )
     private List<Category> categories;
 
-    // --- Getters & Setters ---
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Review> reviews;
 
-    public int getId() {
+    // 🔹 Constructeurs
+    public Book() {
+    }
+
+    public Book(String title, double price) {
+        this.title = title;
+        this.price = price;
+    }
+
+    // 🔹 Getters et Setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -50,28 +62,12 @@ public class Book {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public double getPrice() {
         return price;
     }
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    public double getDiscountedPrice() {
-        return discountedPrice;
-    }
-
-    public void setDiscountedPrice(double discountedPrice) {
-        this.discountedPrice = discountedPrice;
     }
 
     public Publisher getPublisher() {
@@ -82,12 +78,12 @@ public class Book {
         this.publisher = publisher;
     }
 
-    public List<Review> getReviews() {
-        return reviews;
+    public List<Author> getAuthors() {
+        return authors;
     }
 
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
+    public void setAuthors(List<Author> authors) {
+        this.authors = authors;
     }
 
     public List<Category> getCategories() {
@@ -98,15 +94,21 @@ public class Book {
         this.categories = categories;
     }
 
-    // --- Méthode utilitaire (optionnelle) ---
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    // 🔹 Optionnel : méthode toString()
     @Override
     public String toString() {
         return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
                 ", price=" + price +
-                ", discountedPrice=" + discountedPrice +
                 ", publisher=" + (publisher != null ? publisher.getName() : "null") +
                 '}';
     }
